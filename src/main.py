@@ -10,7 +10,7 @@ def main():
     else: 
         basepath = "/"
 
-    copy_dir("static", "public")
+    copy_dir("static", "docs")
     parse_dir_and_generate("content", "docs", basepath)
     if sys.argv[0]:
         basepath = sys.argv[0]
