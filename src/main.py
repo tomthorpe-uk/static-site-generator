@@ -5,25 +5,17 @@ from htmlnode import ParentNode
 import sys
 
 def main():
-    if sys.argv[0]:
-        basepath = sys.argv[0]
-    else: 
-        basepath = "/"
-
+    basepath = "https://tomthorpe-uk.github.io/static-site-generator/"
     copy_dir("static", "docs")
     parse_dir_and_generate("content", "docs", basepath)
-    if sys.argv[0]:
-        basepath = sys.argv[0]
-
-    
 
 
 def parse_dir_and_generate(dir: str, new_dir: str, basepath: str = "/"):
     for item in os.listdir(dir):
         if os.path.isfile(os.path.join(dir, item)):
-            generate_page(os.path.join(dir, item), "template.html", os.path.join(new_dir, item.replace(".md", ".html")))
+            generate_page(os.path.join(dir, item), "template.html", os.path.join(new_dir, item.replace(".md", ".html")), basepath)
         else: 
-            parse_dir_and_generate(os.path.join(dir, item),os.path.join(new_dir, item))
+            parse_dir_and_generate(os.path.join(dir, item),os.path.join(new_dir, item), basepath)
 
 
 def copy_dir(src: str, dest: str):
