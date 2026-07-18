@@ -2,13 +2,23 @@ import shutil
 import os
 from blocks import markdown_to_html_node
 from htmlnode import ParentNode
+import sys
 
 def main():
+    if sys.argv[0]:
+        basepath = sys.argv[0]
+    else: 
+        basepath = "/"
+
     copy_dir("static", "public")
-    parse_dir_and_generate("content", "public")
+    parse_dir_and_generate("content", "docs", basepath)
+    if sys.argv[0]:
+        basepath = sys.argv[0]
+
+    
 
 
-def parse_dir_and_generate(dir: str, new_dir: str):
+def parse_dir_and_generate(dir: str, new_dir: str, basepath: str = "/"):
     for item in os.listdir(dir):
         if os.path.isfile(os.path.join(dir, item)):
             generate_page(os.path.join(dir, item), "template.html", os.path.join(new_dir, item.replace(".md", ".html")))
@@ -31,7 +41,7 @@ def extract_title(markdown: str):
             return line[1:].strip()
     raise ValueError("No title found")
 
-def generate_page(src, template, dest):
+def generate_page(src, template, dest, basepath: str = "/"):
     print(f"Generating page from {src} to {dest}")
     with open(src, "r") as file:
         markdown = file.read()
@@ -41,7 +51,8 @@ def generate_page(src, template, dest):
     content = markdown_to_html_node(markdown).to_html()
     template = template.replace("{{ Title }}", title)
     template = template.replace("{{ Content }}", content)
-    
+    template = template.replace("href=\"/", f"href=\"{basepath}")
+    template = template.replace("src=\"/", f"src=\"{basepath}")
     if not os.path.exists(os.path.dirname(dest)):
         os.makedirs(os.path.dirname(dest))
     with open(dest, "w") as file:
